@@ -1,11 +1,9 @@
-
-
-import express from 'express';
-import uniqid from 'uniqid';
-import createError from 'http-errors';
-import { readProducts, writeProducts } from '../../lib/fs-tools.js';
-import Products from "./productSchema.js"
-import q2m from "query-to-mongo"
+import express from "express";
+import uniqid from "uniqid";
+import createError from "http-errors";
+import { readProducts, writeProducts } from "../../lib/fs-tools.js";
+import Products from "./productSchema.js";
+import q2m from "query-to-mongo";
 /*
 ****************** products CRUD ********************
 1. CREATE → POST http://localhost:3001/products (+ body)
@@ -18,16 +16,16 @@ import q2m from "query-to-mongo"
 const productsRouter = express.Router();
 
 // get all products
-productsRouter.get('/', async (req, res, next) => {
-  // price, category, 
-  
+productsRouter.get("/", async (req, res, next) => {
+  // price, category,
+
   try {
-    const query = q2m(req.query)
-    console.log('query:', query)
-    const products = await Products.find(query.criteria, {}, query.options)
-    res.status(200).send(products)
+    const query = q2m(req.query);
+    console.log("query:", query);
+    const products = await Products.find(query.criteria, {}, query.options);
+    res.status(200).send(products);
   } catch (error) {
-    console.log("getProductsError", error)
+    console.log("getProductsError", error);
     res.send({ message: error.message });
   }
 });
@@ -35,11 +33,11 @@ productsRouter.get('/', async (req, res, next) => {
 // get single product
 productsRouter.get("/:id", async (req, res, next) => {
   try {
-    const product= await Products.findById(req.params.id)
+    const product = await Products.findById(req.params.id);
     if (product) {
       res.send(product);
     } else {
-     next(createError(404, {message: "Product not found."}))
+      next(createError(404, { message: "Product not found." }));
     }
   } catch (error) {
     next(error);
@@ -49,8 +47,8 @@ productsRouter.get("/:id", async (req, res, next) => {
 // create/POST product
 productsRouter.post("/", async (req, res, next) => {
   try {
-    const newProduct = new Products(req.body)
-    const {_id} = await newProduct.save()
+    const newProduct = new Products(req.body);
+    const { _id } = await newProduct.save();
     res.status(200).send({ id: _id });
   } catch (error) {
     res.status(500).send({ message: error.message });
@@ -121,11 +119,15 @@ productsRouter.post("/:id/comments/", async (req, res, next) => {
     if (updatedProduct) {
       res.send(updatedProduct);
     } else {
-      next(createError(404, {message:`Product ${req.params.id} not found`}));
+      next(createError(404, { message: `Product ${req.params.id} not found` }));
     }
   } catch (error) {
     console.log(error);
-    next(createError(500,{message: "An error occurred while adding the comment"}));
+    next(
+      createError(500, {
+        message: "An error occurred while adding the comment",
+      })
+    );
   }
 });
 
@@ -135,11 +137,15 @@ productsRouter.get("/:id/comments/", async (req, res, next) => {
     if (product) {
       res.send(product.comments);
     } else {
-      next(createError(404, {message:`product ${req.params.id} not found`}));
+      next(createError(404, { message: `product ${req.params.id} not found` }));
     }
   } catch (error) {
     console.log(error);
-    next(createError(500, {message:"An error occurred while fetching the comments"}));
+    next(
+      createError(500, {
+        message: "An error occurred while fetching the comments",
+      })
+    );
   }
 });
 
@@ -161,14 +167,13 @@ productsRouter.get("/:id/comments/:commentId", async (req, res, next) => {
         res.send(comments[0]);
       } else {
         next(
-          createError(
-            404,
-            {message:`Comment ${req.params.commentId} not found in comments`}
-          )
+          createError(404, {
+            message: `Comment ${req.params.commentId} not found in comments`,
+          })
         );
       }
     } else {
-      next(createError(404, {message:`product ${req.params.id} not found`}));
+      next(createError(404, { message: `product ${req.params.id} not found` }));
     }
   } catch (error) {
     console.log(error);
@@ -192,11 +197,15 @@ productsRouter.delete("/:id/comments/:commentId", async (req, res, next) => {
     if (product) {
       res.send(product);
     } else {
-      next(createError(404, {message:`product ${req.params.id} not found`}));
+      next(createError(404, { message: `product ${req.params.id} not found` }));
     }
   } catch (error) {
     console.log(error);
-    next(createError(500, {message:"An error occurred while deleting the comment"}));
+    next(
+      createError(500, {
+        message: "An error occurred while deleting the comment",
+      })
+    );
   }
 });
 
@@ -216,7 +225,7 @@ productsRouter.put("/:id/comments/:commentId", async (req, res, next) => {
     if (product) {
       res.send(product);
     } else {
-      next(createError(404, {message:`product ${req.params.id} not found`}));
+      next(createError(404, { message: `product ${req.params.id} not found` }));
     }
   } catch (error) {
     console.log(error);
