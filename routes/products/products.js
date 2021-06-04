@@ -4,6 +4,10 @@ import createError from "http-errors";
 import { readProducts, writeProducts } from "../../lib/fs-tools.js";
 import Products from "./productSchema.js";
 import q2m from "query-to-mongo";
+import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+
 /*
 ****************** products CRUD ********************
 1. CREATE → POST http://localhost:3001/products (+ body)
@@ -232,5 +236,38 @@ productsRouter.put("/:id/comments/:commentId", async (req, res, next) => {
     next(createError(500, "An error occurred while updating the comment"));
   }
 });
+
+// product image upload endpoint
+
+const cloudinaryStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "Products-Images",
+  },
+});
+
+productsRouter.post(
+  "/:id/imageupload",
+  multer({ storage: cloudinaryStorage }).single("image"),
+  async (req, res, next) => {
+    try {
+      const product = await Products.findByIdAndUpdate(
+        req.params.id,
+        { imageUrl: req.file.path },
+        { runValidators: true, new: true }
+      );
+
+      if (product) {
+        res.send(product);
+      } else {
+        next(
+          createError(404, { message: `product ${req.params.id} not found` })
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default productsRouter;
