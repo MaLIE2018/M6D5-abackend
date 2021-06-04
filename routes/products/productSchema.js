@@ -13,8 +13,9 @@ const productSchema = new Schema( {
    name: {type: String, required: true},
    description:{type: String, required: true},
    brand: {type: String, required: true},
+   category:{type: String, required: true},
    imageUrl: {type: String, default: ""},
-   comments: [{type: commentSchema}]
+   comments: [{type: commentSchema, default: []}]
 }, {timestamps:true})
 
 

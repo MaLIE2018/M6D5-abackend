@@ -23,8 +23,7 @@ productsRouter.get('/', async (req, res, next) => {
   
   try {
     const query = q2m(req.query)
-    console.log('query:', query)
-    const products = await Products.find()
+    const products = await Products.find(query.criteria)
     res.status(200).send(products)
   } catch (error) {
     console.log("getProductsError", error)
@@ -49,8 +48,9 @@ productsRouter.get("/:id", async (req, res, next) => {
 // create/POST product
 productsRouter.post("/", async (req, res, next) => {
   try {
-
-    res.status(200).send({ id: newProduct._id });
+    const newProduct = new Products(req.body)
+    const {_id} = await newProduct.save()
+    res.status(200).send({ id: _id });
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
