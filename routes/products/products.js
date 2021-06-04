@@ -23,9 +23,9 @@ productsRouter.get('/', async (req, res, next) => {
   
   try {
     const query = q2m(req.query)
-    console.log('query:', query)
     const products = await Products.find(query.criteria, {}, query.options)
-    res.status(200).send(products)
+    const total = await Products.countDocuments()
+    res.status(200).send({links: query.links("/products", total),total, products})
   } catch (error) {
     console.log("getProductsError", error)
     res.send({ message: error.message });

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "The Last Wish: Introducing the Witcher",
+    "imageUrl": "https://images-na.ssl-images-amazon.com/images/I/51eHtkVLL5L.jpg",
+    "price": 9.59,
+    "category": "books",
+    "brand": "Booker",
+    "description": "Great Book"
+  },
+  {
+    "name": "Sword of Destiny (The Witcher)",
+    "imageUrl": "https://images-na.ssl-images-amazon.com/images/I/91uxJwnolDL.jpg",
+    "price": 10.39,
+    "category": "books",
+    "brand": "Booker",
+    "description": "Great Book"
+  },
+  {
+    "name": "D&D MORDENKAINEN'S TOME OF FOES (Dungeons & Dragons)",
+    "imageUrl": "https://images-na.ssl-images-amazon.com/images/I/8147MOLG%2BoL.jpg",
+    "price": 27.94,
+    "category": "books",
+    "brand": "Booker",
+    "description": "Great Book"
+  },
+  {
+    "name": "Destiny Grimoire Anthology, Volume II: Fallen Kingdoms",
+    "imageUrl": "https://images-na.ssl-images-amazon.com/images/I/91IHwcEy2DL.jpg",
+    "price": 19.92,
+    "category": "books",
+    "brand": "Booker",
+    "description": "Great Book"
+  },
+  {
+    "name": "D&D Waterdeep Dragon Heist HC (Dungeons & Dragons)",
+    "imageUrl": "https://images-na.ssl-images-amazon.com/images/I/81Sfnxpke4L.jpg",
+    "price": 34.61,
+    "category": "books",
+    "brand": "Booker",
+    "description": "Great Book"
+  }
+]
