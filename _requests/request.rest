@@ -1,0 +1,12 @@
+###
+
+POST http://localhost:3001/products/1hryx37o8koy7ltpl/upload
+Content-Disposition: form-data; name="cover" ; filename="handy.jpg"
+Content-Type: image/jpg
+
+< C:\webdev\handy.jpg
+
+
+################################################################
+
+GET http://localhost:3001/reviews
