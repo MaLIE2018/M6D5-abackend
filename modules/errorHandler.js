@@ -21,6 +21,7 @@ export const badRequest = (err, req, res, next) => {
     }
 }
 export const catchAll = (err, req, res, next) => {
+    console.log("all",err)
     if(err) res.status(500).send("Generic Server Error")
     next()
 }
