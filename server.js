@@ -10,7 +10,7 @@ import listEndpoints from "express-list-endpoints"
 import mongoose from "mongoose"
 import createError from 'http-errors';
 const app = express();
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3001;
 
 const whiteList = [process.env.WT_DEV_FE, process.env.WT_PROD_FE]
 
@@ -29,8 +29,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-app.use('/products', filesRouter, productsRouter);
-app.use('/reviews', reviewsRouter);
+app.use("/products", filesRouter, productsRouter);
+app.use("/reviews", reviewsRouter);
 
 app.use(badRequest, notFound, forbidden,catchAll);
 
