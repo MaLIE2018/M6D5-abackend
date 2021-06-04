@@ -1,11 +1,9 @@
-
-
-import express from 'express';
-import uniqid from 'uniqid';
-import createError from 'http-errors';
-import { readProducts, writeProducts } from '../../lib/fs-tools.js';
-import Products from "./productSchema.js"
-import q2m from "query-to-mongo"
+import express from "express";
+import uniqid from "uniqid";
+import createError from "http-errors";
+import { readProducts, writeProducts } from "../../lib/fs-tools.js";
+import Products from "./productSchema.js";
+import q2m from "query-to-mongo";
 /*
 ****************** products CRUD ********************
 1. CREATE → POST http://localhost:3001/products (+ body)
@@ -18,28 +16,29 @@ import q2m from "query-to-mongo"
 const productsRouter = express.Router();
 
 // get all products
-productsRouter.get('/', async (req, res, next) => {
-  // price, category, 
-  
+productsRouter.get("/", async (req, res, next) => {
+  // price, category,
+
   try {
-    const query = q2m(req.query)
-    console.log('query:', query)
-    const products = await Products.find()
-    res.status(200).send(products)
+    const query = q2m(req.query);
+    console.log("query:", query);
+    const products = await Products.find();
+    res.status(200).send(products);
   } catch (error) {
-    console.log("getProductsError", error)
+    console.log("getProductsError", error);
     res.send({ message: error.message });
   }
 });
 
 // get single product
 productsRouter.get("/:id", async (req, res, next) => {
+  console.log("me");
   try {
-    const product= await Products.findById(req.params.id)
+    const product = await Products.findById(req.params.id);
     if (product) {
       res.send(product);
     } else {
-     next(createError(404, {message: "Product not found."}))
+      next(createError(404, { message: "Product not found." }));
     }
   } catch (error) {
     next(error);
@@ -49,7 +48,6 @@ productsRouter.get("/:id", async (req, res, next) => {
 // create/POST product
 productsRouter.post("/", async (req, res, next) => {
   try {
-
     res.status(200).send({ id: newProduct._id });
   } catch (error) {
     res.status(500).send({ message: error.message });
