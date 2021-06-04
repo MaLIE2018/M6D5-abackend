@@ -23,7 +23,8 @@ productsRouter.get('/', async (req, res, next) => {
   
   try {
     const query = q2m(req.query)
-    const products = await Products.find(query.criteria)
+    console.log('query:', query)
+    const products = await Products.find(query.criteria, {}, query.options)
     res.status(200).send(products)
   } catch (error) {
     console.log("getProductsError", error)
@@ -108,7 +109,7 @@ productsRouter.put("/:id", async (req, res, next) => {
 
 productsRouter.post("/:id/comments/", async (req, res, next) => {
   try {
-    const updatedProduct = await productModel.findByIdAndUpdate(
+    const updatedProduct = await Products.findByIdAndUpdate(
       req.params.id,
       {
         $push: {
@@ -120,31 +121,31 @@ productsRouter.post("/:id/comments/", async (req, res, next) => {
     if (updatedProduct) {
       res.send(updatedProduct);
     } else {
-      next(createError(404, `Product ${req.params.id} not found`));
+      next(createError(404, {message:`Product ${req.params.id} not found`}));
     }
   } catch (error) {
     console.log(error);
-    next(createError(500, "An error occurred while adding the comment"));
+    next(createError(500,{message: "An error occurred while adding the comment"}));
   }
 });
 
 productsRouter.get("/:id/comments/", async (req, res, next) => {
   try {
-    const product = await productModel.findById(req.params.id);
+    const product = await Products.findById(req.params.id);
     if (product) {
       res.send(product.comments);
     } else {
-      next(createError(404, `product ${req.params.id} not found`));
+      next(createError(404, {message:`product ${req.params.id} not found`}));
     }
   } catch (error) {
     console.log(error);
-    next(createError(500, "An error occurred while fetching the comments"));
+    next(createError(500, {message:"An error occurred while fetching the comments"}));
   }
 });
 
 productsRouter.get("/:id/comments/:commentId", async (req, res, next) => {
   try {
-    const product = await productModel.findOne(
+    const product = await Products.findOne(
       {
         _id: req.params.id,
       },
@@ -162,22 +163,22 @@ productsRouter.get("/:id/comments/:commentId", async (req, res, next) => {
         next(
           createError(
             404,
-            `Comment ${req.params.commentId} not found in comments`
+            {message:`Comment ${req.params.commentId} not found in comments`}
           )
         );
       }
     } else {
-      next(createError(404, `product ${req.params.id} not found`));
+      next(createError(404, {message:`product ${req.params.id} not found`}));
     }
   } catch (error) {
     console.log(error);
-    next(createError(500, "An error occurred while fetching comment"));
+    next(createError(500, "An error occurred while updating the comment"));
   }
 });
 
 productsRouter.delete("/:id/comments/:commentId", async (req, res, next) => {
   try {
-    const product = await productModel.findByIdAndUpdate(
+    const product = await Products.findByIdAndUpdate(
       req.params.id,
       {
         $pull: {
@@ -191,17 +192,17 @@ productsRouter.delete("/:id/comments/:commentId", async (req, res, next) => {
     if (product) {
       res.send(product);
     } else {
-      next(createError(404, `product ${req.params.id} not found`));
+      next(createError(404, {message:`product ${req.params.id} not found`}));
     }
   } catch (error) {
     console.log(error);
-    next(createError(500, "An error occurred while deleting the comment"));
+    next(createError(500, {message:"An error occurred while deleting the comment"}));
   }
 });
 
 productsRouter.put("/:id/comments/:commentId", async (req, res, next) => {
   try {
-    const product = await productModel.findOneAndUpdate(
+    const product = await Products.findOneAndUpdate(
       {
         _id: req.params.id,
         "comments._id": req.params.commentId,
@@ -215,7 +216,7 @@ productsRouter.put("/:id/comments/:commentId", async (req, res, next) => {
     if (product) {
       res.send(product);
     } else {
-      next(createError(404, `product ${req.params.id} not found`));
+      next(createError(404, {message:`product ${req.params.id} not found`}));
     }
   } catch (error) {
     console.log(error);
