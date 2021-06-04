@@ -2,7 +2,7 @@ import express from 'express';
 import uniqid from 'uniqid';
 import createError from 'http-errors';
 import { readProducts, writeProducts } from '../../lib/fs-tools.js';
-
+import products from "./productSchema.js"
 /*
 ****************** products CRUD ********************
 1. CREATE → POST http://localhost:3001/products (+ body)
