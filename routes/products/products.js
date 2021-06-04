@@ -1,3 +1,5 @@
+
+
 import express from 'express';
 import uniqid from 'uniqid';
 import createError from 'http-errors';
@@ -15,7 +17,7 @@ import products from "./productSchema.js"
 const productsRouter = express.Router();
 
 // get all products
-productsRouter.get('/', async (req, res, next) => {
+productsRouter.get("/", async (req, res, next) => {
   try {
     // 1. read request body
     const content = await readProducts();
@@ -28,7 +30,7 @@ productsRouter.get('/', async (req, res, next) => {
 });
 
 // get single product
-productsRouter.get('/:id', async (req, res, next) => {
+productsRouter.get("/:id", async (req, res, next) => {
   try {
     // 1. read request body
     const content = await readProducts();
@@ -48,7 +50,7 @@ productsRouter.get('/:id', async (req, res, next) => {
 });
 
 // create/POST product
-productsRouter.post('/', async (req, res, next) => {
+productsRouter.post("/", async (req, res, next) => {
   try {
     // 1. read request body
     const content = await readProducts();
@@ -59,20 +61,19 @@ productsRouter.post('/', async (req, res, next) => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
 
     content.push(newProduct);
 
     await writeProducts(content);
 
-    res.status(200).send({id:newProduct._id});
+    res.status(200).send({ id: newProduct._id });
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
 });
 
 // DELETE product
-productsRouter.delete('/:id', async (req, res, next) => {
+productsRouter.delete("/:id", async (req, res, next) => {
   try {
     const content = await readProducts();
 
@@ -93,7 +94,7 @@ productsRouter.delete('/:id', async (req, res, next) => {
 });
 
 // update/PUT product
-productsRouter.put('/:id', async (req, res, next) => {
+productsRouter.put("/:id", async (req, res, next) => {
   try {
     const content = await readProducts();
 
@@ -108,7 +109,7 @@ productsRouter.put('/:id', async (req, res, next) => {
       };
       content[product] = newProduct;
       await writeProducts(content);
-      res.send({id: newProduct._id});
+      res.send({ id: newProduct._id });
     } else {
       res
         .status(404)
@@ -116,6 +117,125 @@ productsRouter.put('/:id', async (req, res, next) => {
     }
   } catch (error) {
     res.send(500).send({ message: error.message });
+  }
+});
+
+// comments endpoints **************************
+
+productsRouter.post("/:id/comments/", async (req, res, next) => {
+  try {
+    const updatedProduct = await productModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: {
+          comments: req.body,
+        },
+      },
+      { runValidators: true, new: true }
+    );
+    if (updatedProduct) {
+      res.send(updatedProduct);
+    } else {
+      next(createError(404, `Product ${req.params.id} not found`));
+    }
+  } catch (error) {
+    console.log(error);
+    next(createError(500, "An error occurred while adding the comment"));
+  }
+});
+
+productsRouter.get("/:id/comments/", async (req, res, next) => {
+  try {
+    const product = await productModel.findById(req.params.id);
+    if (product) {
+      res.send(product.comments);
+    } else {
+      next(createError(404, `product ${req.params.id} not found`));
+    }
+  } catch (error) {
+    console.log(error);
+    next(createError(500, "An error occurred while fetching the comments"));
+  }
+});
+
+productsRouter.get("/:id/comments/:commentId", async (req, res, next) => {
+  try {
+    const product = await productModel.findOne(
+      {
+        _id: req.params.id,
+      },
+      {
+        comments: {
+          $elemMatch: { _id: req.params.commentId },
+        },
+      }
+    );
+    if (product) {
+      const { comments } = product;
+      if (comments && comments.length > 0) {
+        res.send(comments[0]);
+      } else {
+        next(
+          createError(
+            404,
+            `Comment ${req.params.commentId} not found in comments`
+          )
+        );
+      }
+    } else {
+      next(createError(404, `product ${req.params.id} not found`));
+    }
+  } catch (error) {
+    console.log(error);
+    next(createError(500, "An error occurred while fetching comment"));
+  }
+});
+
+productsRouter.delete("/:id/comments/:commentId", async (req, res, next) => {
+  try {
+    const product = await productModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $pull: {
+          comments: { _id: req.params.commentId },
+        },
+      },
+      {
+        new: true,
+      }
+    );
+    if (product) {
+      res.send(product);
+    } else {
+      next(createError(404, `product ${req.params.id} not found`));
+    }
+  } catch (error) {
+    console.log(error);
+    next(createError(500, "An error occurred while deleting the comment"));
+  }
+});
+
+productsRouter.put("/:id/comments/:commentId", async (req, res, next) => {
+  try {
+    const product = await productModel.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        "comments._id": req.params.commentId,
+      },
+      { $set: { "comments.$": req.body } },
+      {
+        runValidators: true,
+        new: true,
+      }
+    );
+    if (product) {
+      res.send(product);
+    } else {
+      next(createError(404, `product ${req.params.id} not found`));
+    }
+  } catch (error) {
+    console.log(error);
+    next(createError(500, "An error occurred while updating the comment"));
   }
 });
 
